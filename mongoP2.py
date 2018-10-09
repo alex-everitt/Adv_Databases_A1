@@ -19,7 +19,7 @@ query_3_diff = []
 	
 script_start_time = datetime.now()
 print("start")
-for x in range(1, 2):
+for x in range(1, 11):
 	start_query1 = datetime.now()
 	review_count = db.reviews.aggregate([{"$group" : {"_id" : "$userID", "Total_Reviews" : {"$sum": 1}}}, {"$sort" : { "_id" : 1}}])
 	query_1_diff.append((datetime.now() - start_query1).total_seconds())
@@ -31,7 +31,7 @@ for x in range(1, 2):
 	print("Q2 done")
 	
 	start_query3 = datetime.now()
-	query_3 = db.reviews.aggregate([{"$match": { "rating" : {"$lt":3}}}, {"$group" : {"_id" : "$itemID"}}, {"$project" : {"_id" : 1} }, {"$lookup": {"from": "reviews", "localField": "_id", "foreignField": "itemID", "as": "matching_reviews"}}, {"$unwind" : "$matching_reviews"}, {"$group" : {"_id" : "$_id" , "avg" : {"$avg" : "$matching_reviews.rating"}}}, {"$lookup": {"from": "movies", "localField": "_id", "foreignField": "_id", "as":"movie" }}, {"$project": {"_id":1, "avg":1, "movie.title":1}},{"$sort": {"avg":-1}} , {"$limit" : 10}])
+	query_3 = db.reviews_short.aggregate([{"$match": { "rating" : {"$lt":3}}}, {"$group" : {"_id" : "$itemID"}}, {"$project" : {"_id" : 1} }, {"$lookup": {"from": "reviews_short", "localField": "_id", "foreignField": "itemID", "as": "matching_reviews"}}, {"$unwind" : "$matching_reviews"}, {"$group" : {"_id" : "$_id" , "avg" : {"$avg" : "$matching_reviews.rating"}}}, {"$lookup": {"from": "movies", "localField": "_id", "foreignField": "_id", "as":"movie" }}, {"$project": {"_id":1, "avg":1, "movie.title":1}},{"$sort": {"avg":-1}} , {"$limit" : 10}])
 	print("Q3 done")	
 	query_3_diff.append((datetime.now() - start_query3).total_seconds())
 	print(x)
