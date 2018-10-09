@@ -85,8 +85,8 @@ session = cluster.connect()
 #insert()
 #print ("\nSelecting All")
 #rows = session.execute('SELECT user_id, count(*) FROM a1.reviews group by user_id;')#LIMIT 50
-#rows = session.execute('SELECT movie_id, avg(rating) FROM a1.reviews GROUP BY partition, movie_id;')
-rows = session.execute('SELECT * FROM a1.review_count GROUP BY partition, user_id;')# LIMIT 50
+rows = session.execute('SELECT movie_id, avg(rating) FROM a1.reviews GROUP BY partition, movie_id;')
+#rows = session.execute('SELECT * FROM a1.review_count GROUP BY partition, user_id;')# LIMIT 50
 
 for r in rows:
 	print(r)
