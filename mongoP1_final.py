@@ -89,7 +89,7 @@ def insert_movies():
 		if (count % 500 ==0) : print(str(count) + "/60 000")
 	print('Done')
 	
-#uri = "mongodb://alex-everitt:aCB2FSPw6oyL4ZuCgqRh4FghoCqLZf0IDILPJe3goTQmIS7bhbiUm5OM765TqqxY8QyB7tLkwsM2YrP9wCW7tQ==@alex-everitt.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"
+#uri = "<connection_string>"
 #client = MongoClient(uri)
 client = MongoClient('localhost', 27017)
 db = client["A1"]
