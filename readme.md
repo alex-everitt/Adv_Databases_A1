@@ -53,23 +53,23 @@ Information about the items (movies); this is a tab separated
 
 # Instructions
 
-Mongo:
-1. install mongo service using yum
-2. install pip using yum
-3. install pymongo using pip
-4. run "python mongo_queries.py"
+**MongoDB:**   
+1. install mongo service using yum   
+2. install pip using yum   
+3. install pymongo using pip   
+4. run "python mongo_queries.py"   
 
 ------------------------------
 
-Cassandra:
-1. install cassandra service using yum
-2. install pip using yum
-3. install cassandra-driver using pip
-4. run "python cassandra_queries.py"
+**Cassandra:**    
+1. install cassandra service using yum   
+2. install pip using yum   
+3. install cassandra-driver using pip   
+4. run "python cassandra_queries.py"   
 
 ------------------------------
 
-Neo4j:
+**Neo4j:**        
 1 Download Neo4j  
 2 Move to neo4j directory, run '/bin/neo4j console' command to start local instance of Neo4j   
 3 Go to bolt://localhost:7687 to connect to local Neo4j instance   
