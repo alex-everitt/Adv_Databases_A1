@@ -70,9 +70,9 @@ Cassandra:
 ------------------------------
 
 Neo4j:
-#1 Download Neo4j 
-#2 Move to neo4j directory, run '/bin/neo4j console' command to start local instance of Neo4j
-#3 Go to bolt://localhost:7687 to connect to local Neo4j instance
-#4 Follow instructions to change username/password
-#5 Connect to local instance using: driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "neo4jpass"))
-#6 Import data to database using import_movies(), then import_ratings() functions in that order
+1 Download Neo4j  
+2 Move to neo4j directory, run '/bin/neo4j console' command to start local instance of Neo4j   
+3 Go to bolt://localhost:7687 to connect to local Neo4j instance   
+4 Follow instructions to change username/password   
+5 Connect to local instance using: driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "neo4jpass"))   
+6 Import data to database using import_movies(), then import_ratings() functions in that order   
