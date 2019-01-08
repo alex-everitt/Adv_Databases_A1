@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 
 def PrintTable(rows, query_num):
+	#print results formatted neatly in table
 	if(query_num == 1):
 		t = PrettyTable(['User ID','# of Reviews'])
 		for r in rows:
@@ -19,19 +20,16 @@ def PrintTable(rows, query_num):
 		t = PrettyTable(['Movie ID', 'Title', 'Avg Rating'])
 		for r in rows:
 			t.add_row([r['_id'], r['movie'][0]['title'], r['avg']])
-	#print(rows.__dict__.keys())
-	#count=0
-	#for r in rows:
-		#count = count + r['Total_Reviews']
-		#t.add_row([r['_id'], r['movie'][0]['title'],r['rated'][0]['avg']])
-		#t.add_row([r['_id'], r['avg']])
-	print(t)
+			
+	print(t)#print table
 
 def insert_reviews():
 ########################## INSERT ###########################
 	cwd = os.getcwd()
-	file = open(cwd + "/dataset1/netIDs.data")
-	count=0
+	file = open(cwd + "/dataset1/netIDs.data")#read input file
+	
+	count=0#track # of records inserted
+	#iterate over lines in dataset
 	for line in file:
 		lineArr = line.split('\t')
 		time = datetime.utcfromtimestamp(int(lineArr[3])).strftime('%Y-%m-%d %H:%M:%S')
@@ -50,11 +48,13 @@ def insert_reviews():
 def insert_movies():
 ########################## INSERT ###########################
 	cwd = os.getcwd()
-	file = open(cwd + "/dataset1/movies.dat")
-	count=0
+	file = open(cwd + "/dataset1/movies.dat")#read dataset
+	
+	count=0# track # of records inserted
+	#iterate over lines in dataset
 	for line in file:
 		lineArr = line.split('|')
-		genres=[]
+		genres=[]#store all relevent genres in a list
 		
 		if(lineArr[5]=='1'):genres.append("unknown") 
 		if(lineArr[6]=='1'):genres.append("Action") 
@@ -75,7 +75,7 @@ def insert_movies():
 		if(lineArr[21]=='1'):genres.append("Thriller") 
 		if(lineArr[22]=='1'):genres.append("War") 
 		if(lineArr[23]=='1'):genres.append("Western")
-		
+		#insert values into dictionary to prepare for insertion
 		movie = {
 			'_id' : int(lineArr[0]),
 			'title' : lineArr[1],
@@ -86,37 +86,28 @@ def insert_movies():
 		#Step 3: Insert business object directly into MongoDB via isnert_one
 		result=db.movies.insert_one(movie)
 		count = count + 1
-		if (count % 500 ==0) : print(str(count) + "/60 000")
+		if (count % 500 ==0) : print(str(count) + "/60 000")#track insertion progress
 	print('Done')
 	
-#uri = "<connection_string>"
-#client = MongoClient(uri)
-client = MongoClient('localhost', 27017)
-db = client["A1"]
 
-col = db["reviews"]
+client = MongoClient('localhost', 27017)#create session with mongo service on local host
+db = client["A1"]#database reference
+col = db["reviews"]#reviews collection reference
 
 serverStatusResult=db.command("serverStatus")
-#insert_reviews()
-#insert_movies()
-
-#uncomment below as needed
+########################run once on the first time starting#############################
+insert_reviews()
+insert_movies()
 
 ########################### Find total reviews by each user ID ###########################
-#query_1 = db.reviews.aggregate([{"$group" : {"_id" : "$userID", "Total_Reviews" : {"$sum": 1}}}, {"$sort" : { "_id" : 1}}])#iterate over reviews collection and determine number of reviews by each distinct userID
-#PrintTable(query_1,1)
+query_1 = db.reviews.aggregate([{"$group" : {"_id" : "$userID", "Total_Reviews" : {"$sum": 1}}}, {"$sort" : { "_id" : 1}}])#iterate over reviews collection and determine number of reviews by each distinct userID
+PrintTable(query_1,1)
 
 ###########################Find top 10 movies with highest average rating#################
-#query_2 = db.reviews.aggregate([{"$group" : {"_id" : "$itemID", "avg" : {"$avg": "$rating"}}},{"$sort" : {"avg" : -1}}, {"$limit" : 10}])#iterate over reviews collection and determine average rating for each distinct movieID. Sort results and output only top 10 rated movies
-#PrintTable(query_2,2)
+query_2 = db.reviews.aggregate([{"$group" : {"_id" : "$itemID", "avg" : {"$avg": "$rating"}}},{"$sort" : {"avg" : -1}}, {"$limit" : 10}])#iterate over reviews collection and determine average rating for each distinct movieID. Sort results and output only top 10 rated movies
+PrintTable(query_2,2)
 
 ###########################Find top 10 avg rated movies with at least 1 rating < 3 #################
 query_3 = db.reviews_short.aggregate([{"$match": { "rating" : {"$lt":3}}}, {"$group" : {"_id" : "$itemID"}}, {"$project" : {"_id" : 1} }, {"$lookup": {"from": "reviews_short", "localField": "_id", "foreignField": "itemID", "as": "matching_reviews"}}, {"$unwind" : "$matching_reviews"}, {"$group" : {"_id" : "$_id" , "avg" : {"$avg" : "$matching_reviews.rating"}}}, {"$lookup": {"from": "movies", "localField": "_id", "foreignField": "_id", "as":"movie" }}, {"$project": {"_id":1, "avg":1, "movie.title":1}},{"$sort": {"avg":-1}} , {"$limit" : 10}])#find all distint movieID with at least one rating < 3. Left outer join this collection with the reviews set in order to have all relevent reviews that next need to be averaged for each movieID. Lastly, join the set of averaged movies with the movie set in order to determine the title. Sort results and only output top 10 highest average ratings
-
 PrintTable(query_3,3)
-
-
-
-
-
 
